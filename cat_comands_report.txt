@@ -1,0 +1,24 @@
+vyacheslav@vyacheslav:~/animals$ echo "Собаки, Кошки, Хомяки" > Домашние_животные.txt
+vyacheslav@vyacheslav:~/animals$ ls
+Домашние_животные.txt
+vyacheslav@vyacheslav:~/animals$ echo "Лошади, Верблюды, Ослы" > Вьючные_животные.txt
+vyacheslav@vyacheslav:~/animals$ cat Домашние_животные.txt Вьючные_животные.txt > Объединенный_файл.txt
+vyacheslav@vyacheslav:~/animals$ ls
+Вьючные_животные.txt  Домашние_животные.txt  Объединенный_файл.txt
+vyacheslav@vyacheslav:~/animals$ cat Объединенный_файл.txt
+Собаки, Кошки, Хомяки
+Лошади, Верблюды, Ослы
+vyacheslav@vyacheslav:~/animals$ mv Объединенный_файл.txt Друзья_человека.txt
+vyacheslav@vyacheslav:~/animals$ mkdir new_direct
+vyacheslav@vyacheslav:~/animals$ mv Друзья_человека.txt new_direct/
+vyacheslav@vyacheslav:~/animals$ ls
+new_direct  Вьючные_животные.txt  Домашние_животные.txt
+vyacheslav@vyacheslav:~/animals$ cd new_direct/
+vyacheslav@vyacheslav:~/animals/new_direct$ ls
+Друзья_человека.txt
+vyacheslav@vyacheslav:~/animals/new_direct$ cat Друзья_человека.txt 
+Собаки, Кошки, Хомяки
+Лошади, Верблюды, Ослы
+vyacheslav@vyacheslav:~/animals/new_direct$ 
+
+
