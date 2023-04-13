@@ -20,5 +20,44 @@ vyacheslav@vyacheslav:~/animals/new_direct$ cat Друзья_человека.tx
 Собаки, Кошки, Хомяки
 Лошади, Верблюды, Ослы
 vyacheslav@vyacheslav:~/animals/new_direct$ 
+vyacheslav@vyacheslav:~/animals/animals$ wget https://dev.mysql.com/get/mysql-apt-config_0.8.17-1_all.deb
+--2023-04-13 23:00:26--  https://dev.mysql.com/get/mysql-apt-config_0.8.17-1_all.deb
+Распознаётся dev.mysql.com (dev.mysql.com)… 23.61.243.80, 2001:2030:21:1a9::2e31, 2001:2030:21:19e::2e31
+Подключение к dev.mysql.com (dev.mysql.com)|23.61.243.80|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа… 302 Moved Temporarily
+Адрес: https://repo.mysql.com//mysql-apt-config_0.8.17-1_all.deb [переход]
+--2023-04-13 23:00:26--  https://repo.mysql.com//mysql-apt-config_0.8.17-1_all.deb
+Распознаётся repo.mysql.com (repo.mysql.com)… 2.22.40.219
+Подключение к repo.mysql.com (repo.mysql.com)|2.22.40.219|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа… 200 OK
+Длина: 35592 (35K) [application/x-debian-package]
+Сохранение в: «mysql-apt-config_0.8.17-1_all.deb»
 
+mysql-apt-config_0.8.17-1_ 100%[=====================================>]  34.76K  --.-KB/s    за 0.08s   
+
+2023-04-13 23:00:27 (425 KB/s) - «mysql-apt-config_0.8.17-1_all.deb» сохранён [35592/35592]
+
+vyacheslav@vyacheslav:~/animals/animals$ sudo dpkg -i mysql-apt-config_0.8.17-1_all.deb
+[sudo] пароль для vyacheslav: 
+Выбор ранее не выбранного пакета mysql-apt-config.
+(Чтение базы данных … на данный момент установлено 301743 файла и каталога.)
+Подготовка к распаковке mysql-apt-config_0.8.17-1_all.deb …
+Распаковывается mysql-apt-config (0.8.17-1) …
+Настраивается пакет mysql-apt-config (0.8.17-1) …
+Warning: apt-key should not be used in scripts (called from postinst maintainerscript of the package mysql-apt-config)
+OK
+vyacheslav@vyacheslav:~/animals/animals$ sudo apt-get update
+vyacheslav@vyacheslav:~/animals/animals$ sudo apt-get install mysql-client
+Чтение списков пакетов… Готово
+Построение дерева зависимостей       
+Чтение информации о состоянии… Готово
+Следующие пакеты устанавливались автоматически и больше не требуются:
+  libgsoap-2.8.91 liblzf1 libsdl1.2debian libvncserver1
+Для их удаления используйте «sudo apt autoremove».
+Будут установлены следующие дополнительные пакеты:
+  mysql-client-8.0 mysql-client-core-8.0
+Следующие НОВЫЕ пакеты будут установлены:
+  mysql-client mysql-client-8.0 mysql-client-core-8.0
+
+sudo dpkg -r mysql-client
 
