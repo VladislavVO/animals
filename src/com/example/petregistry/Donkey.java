@@ -1,0 +1,8 @@
+package com.example.petregistry;
+
+
+public class Donkey extends PackAnimal {
+    public Donkey(String name) {
+        super(name, "Donkey");
+    }
+}
