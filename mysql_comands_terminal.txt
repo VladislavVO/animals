@@ -1,0 +1,171 @@
+vyacheslav@vyacheslav:~$ sudo service mysql start
+vyacheslav@vyacheslav:~$ mysql -u vladislav -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.32-0ubuntu0.20.04.2 (Ubuntu)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> CREATE DATABASE IF NOT EXISTS Друзья_человека;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CREATE DATABASE IF NOT EXISTS Друзья_человека;
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql> USE Друзья_человека;
+Database changed
+mysql> CREATE TABLE IF NOT EXISTS Домашние_животные (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     тип VARCHAR(255) NOT NULL,
+    ->     имя VARCHAR(255) NOT NULL,
+    ->     команда VARCHAR(255) NOT NULL,
+    ->     дата_рождения DATE NOT NULL
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE IF NOT EXISTS Вьючные_животные (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     тип VARCHAR(255) NOT NULL,
+    ->     имя VARCHAR(255) NOT NULL,
+    ->     команда VARCHAR(255) NOT NULL,
+    ->     дата_рождения DATE NOT NULL
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Домашние_животные (тип, имя, команда, дата_рождения)
+    -> VALUES ('собака', 'Барбос', 'сидеть', '2020-01-01'),
+    ->        ('кошка', 'Мурка', 'ловить мышей', '2019-06-15'),
+    ->        ('хомяк', 'Пушистик', 'прятаться', '2021-03-25');
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Вьючные_животные (тип, имя, команда, дата_рождения)
+    -> VALUES ('лошадь', 'Буцефал', 'тянуть телегу', '2018-04-20'),
+    ->        ('верблюд', 'Али', 'перевозить грузы', '2017-09-30'),
+    ->        ('осел', 'Грива', 'нести груз', '2020-08-10');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> DELETE FROM Вьючные_животные WHERE тип = 'верблюд';
+Query OK, 1 row affected (0.04 sec)
+
+mysql> CREATE TABLE IF NOT EXISTS Лошади_и_ослы AS
+    -> SELECT * FROM Вьючные_животные WHERE тип = 'лошадь' OR тип = 'осел';
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE IF NOT EXISTS Молодые_животные (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     тип VARCHAR(255) NOT NULL,
+    ->     имя VARCHAR(255) NOT NULL,
+    ->     команда VARCHAR(255) NOT NULL,
+    ->     дата_рождения DATE NOT NULL,
+    ->     возраст_в_месяцах INT NOT NULL
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Молодые_животные (тип, имя, команда, дата_рождения, возраст_в_месяцах)
+    -> SELECT тип, имя, команда, дата_рождения, TIMESTAMPDIFF(MONTH, дата_рождения, CURDATE()) AS возраст_в_месяцах
+    -> FROM (
+    ->     SELECT * FROM Домашние_животные
+    ->     UNION ALL
+    ->     SELECT * FROM Лошади_и_ослы
+    -> ) AS Объединенная_таблица
+    -> WHERE TIMESTAMPDIFF(YEAR, дата_рождения, CURDATE()) >= 1 AND TIMESTAMPDIFF(YEAR, дата_рождения, CURDATE()) < 3;
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE IF NOT EXISTS Общая_таблица (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     тип VARCHAR(255) NOT NULL,
+    ->     имя VARCHAR(255) NOT NULL,
+    ->     команда VARCHAR(255) NOT NULL,
+    ->     дата_рождения DATE NOT NULL,
+    ->     происхождение ENUM('домашние', 'вьючные', 'лошади_и_ослы', 'молодые') NOT NULL
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO Общая_таблица (тип, имя, команда, дата_рождения, происхождение)
+    -> SELECT тип, имя, команда, дата_рождения, 'домашние' AS происхождение
+    -> FROM Домашние_животные
+    -> UNION ALL
+    -> SELECT тип, имя, команда, дата_рождения, 'вьючные' AS происхождение
+    -> FROM Вьючные_животные
+    -> UNION ALL
+    -> SELECT тип, имя, команда, дата_рождения, 'лошади_и_ослы' AS происхождение
+    -> FROM Лошади_и_ослы
+    -> UNION ALL
+    -> SELECT тип, имя, команда, дата_рождения, 'молодые' AS происхождение
+    -> FROM Молодые_животные;
+Query OK, 9 rows affected (0.01 sec)
+Records: 9  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Общая_таблица;
++----+--------------+------------------+---------------------------+---------------------------+----------------------------+
+| id | тип          | имя              | команда                   | дата_рождения             | происхождение              |
++----+--------------+------------------+---------------------------+---------------------------+----------------------------+
+|  1 | собака       | Барбос           | сидеть                    | 2020-01-01                | домашние                   |
+|  2 | кошка        | Мурка            | ловить мышей              | 2019-06-15                | домашние                   |
+|  3 | хомяк        | Пушистик         | прятаться                 | 2021-03-25                | домашние                   |
+|  4 | лошадь       | Буцефал          | тянуть телегу             | 2018-04-20                | вьючные                    |
+|  5 | осел         | Грива            | нести груз                | 2020-08-10                | вьючные                    |
+|  6 | лошадь       | Буцефал          | тянуть телегу             | 2018-04-20                | лошади_и_ослы              |
+|  7 | осел         | Грива            | нести груз                | 2020-08-10                | лошади_и_ослы              |
+|  8 | хомяк        | Пушистик         | прятаться                 | 2021-03-25                | молодые                    |
+|  9 | осел         | Грива            | нести груз                | 2020-08-10                | молодые                    |
++----+--------------+------------------+---------------------------+---------------------------+----------------------------+
+9 rows in set (0.00 sec)
+
+mysql> SHOW TABLES;
++-----------------------------------------+
+| Tables_in_Друзья_человека               |
++-----------------------------------------+
+| Вьючные_животные                        |
+| Домашние_животные                       |
+| Лошади_и_ослы                           |
+| Молодые_животные                        |
+| Общая_таблица                           |
++-----------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> DESCRIBE Молодые_животные;
++----------------------------------+--------------+------+-----+---------+----------------+
+| Field                            | Type         | Null | Key | Default | Extra          |
++----------------------------------+--------------+------+-----+---------+----------------+
+| id                               | int          | NO   | PRI | NULL    | auto_increment |
+| тип                              | varchar(255) | NO   |     | NULL    |                |
+| имя                              | varchar(255) | NO   |     | NULL    |                |
+| команда                          | varchar(255) | NO   |     | NULL    |                |
+| дата_рождения                    | date         | NO   |     | NULL    |                |
+| возраст_в_месяцах                | int          | NO   |     | NULL    |                |
++----------------------------------+--------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Молодые_животные;
++----+------------+------------------+---------------------+---------------------------+----------------------------------+
+| id | тип        | имя              | команда             | дата_рождения             | возраст_в_месяцах                |
++----+------------+------------------+---------------------+---------------------------+----------------------------------+
+|  1 | хомяк      | Пушистик         | прятаться           | 2021-03-25                |                               24 |
+|  2 | осел       | Грива            | нести груз          | 2020-08-10                |                               32 |
++----+------------+------------------+---------------------+---------------------------+----------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Лошади_и_ослы;
++----+--------------+----------------+---------------------------+---------------------------+
+| id | тип          | имя            | команда                   | дата_рождения             |
++----+--------------+----------------+---------------------------+---------------------------+
+|  1 | лошадь       | Буцефал        | тянуть телегу             | 2018-04-20                |
+|  3 | осел         | Грива          | нести груз                | 2020-08-10                |
++----+--------------+----------------+---------------------------+---------------------------+
+2 rows in set (0.00 sec)
+
+mysql> 
+
+
